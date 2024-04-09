@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   latlong2: ">=0.8.0 <0.10.0"
+  turf: ">=0.0.8"
   flutter_map_dragmarker: ">=6.0.0 <7.0.0"
 
 dev_dependencies:
