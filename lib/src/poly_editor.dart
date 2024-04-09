@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:turf/helpers.dart';
+import 'package:turf/midpoint.dart';
 
 class PolyEditor {
   final List<LatLng> points;
@@ -63,10 +65,7 @@ class PolyEditor {
 
       if (intermediateIcon != null) {
         final indexClosure = c;
-        final intermediatePoint = LatLng(
-            polyPoint.latitude + (polyPoint2.latitude - polyPoint.latitude) / 2,
-            polyPoint.longitude +
-                (polyPoint2.longitude - polyPoint.longitude) / 2);
+        final intermediatePoint = _intermediatePoint(polyPoint, polyPoint2);
 
         dragMarkers.add(DragMarker(
           point: intermediatePoint,
@@ -85,13 +84,7 @@ class PolyEditor {
     if (addClosePathMarker && (points.length > 2)) {
       if (intermediateIcon != null) {
         final finalPointIndex = points.length - 1;
-
-        final intermediatePoint = LatLng(
-            points[finalPointIndex].latitude +
-                (points[0].latitude - points[finalPointIndex].latitude) / 2,
-            points[finalPointIndex].longitude +
-                (points[0].longitude - points[finalPointIndex].longitude) / 2);
-
+        final intermediatePoint = _intermediatePoint(points[finalPointIndex], points[0]);
         final indexClosure = points.length - 1;
 
         dragMarkers.add(DragMarker(
@@ -109,4 +102,16 @@ class PolyEditor {
 
     return dragMarkers;
   }
+}
+
+LatLng _intermediatePoint(LatLng p1, LatLng p2) {
+  return _pointToLatLng(midpoint(_latLngToPoint(p1) , _latLngToPoint(p2)));
+}
+
+Point _latLngToPoint(LatLng ll) {
+  return Point(coordinates: Position(ll.longitude, ll.latitude));
+}
+
+LatLng _pointToLatLng(Point p) {
+  return LatLng(p.coordinates.lat.toDouble(), p.coordinates.lng.toDouble());
 }
